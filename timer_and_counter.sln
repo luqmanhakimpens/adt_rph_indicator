@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "timer_and_counter", "timer_and_counter\timer_and_counter.csproj", "{507FF674-75AB-4C66-8DA8-DB17F4FD1982}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{507FF674-75AB-4C66-8DA8-DB17F4FD1982}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{507FF674-75AB-4C66-8DA8-DB17F4FD1982}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{507FF674-75AB-4C66-8DA8-DB17F4FD1982}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{507FF674-75AB-4C66-8DA8-DB17F4FD1982}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AB824B9C-2900-4831-A3FD-6C74F41B57ED}
+	EndGlobalSection
+EndGlobal
