@@ -25,23 +25,23 @@ namespace timer_and_counter.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.DateTime timeReview {
+        public global::System.DateTime timeSingleTask {
             get {
-                return ((global::System.DateTime)(this["timeReview"]));
+                return ((global::System.DateTime)(this["timeSingleTask"]));
             }
             set {
-                this["timeReview"] = value;
+                this["timeSingleTask"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.DateTime timeDecision {
+        public global::System.DateTime timeAllTask {
             get {
-                return ((global::System.DateTime)(this["timeDecision"]));
+                return ((global::System.DateTime)(this["timeAllTask"]));
             }
             set {
-                this["timeDecision"] = value;
+                this["timeAllTask"] = value;
             }
         }
         
@@ -72,12 +72,12 @@ namespace timer_and_counter.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double adt {
+        public double indicator {
             get {
-                return ((double)(this["adt"]));
+                return ((double)(this["indicator"]));
             }
             set {
-                this["adt"] = value;
+                this["indicator"] = value;
             }
         }
         

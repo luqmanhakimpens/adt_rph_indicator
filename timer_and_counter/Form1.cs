@@ -19,21 +19,21 @@ namespace timer_and_counter
 {
     public partial class Form1 : Form
     {
-        String appVersion = "v1.1";
+        String appVersion = "Version: 2.0";
         DateTime tt;
         DateTime timerLastDecision;
-        DateTime timerTotalReview;
+        DateTime timerSingleTask;
         DateTime startTime;
-        DateTime timerDecision;
+        DateTime timerAllTask;
         
         TimeSpan td,last_td;
 
         private static System.Timers.Timer aTimer;
 
-        bool timerRunning = false, timerstarted = false;
+        bool timerRunning = false, timerstarted = false, indicator_is_rph = false;
         
         UInt32 submitted,skipped;
-        double adt;
+        double indicator;
 
         public Form1()
         {
@@ -43,25 +43,36 @@ namespace timer_and_counter
         private void Form1_Load(object sender, EventArgs e)
         {
             labelVersion.Text = appVersion;
-            timer1.Stop();
+            //timer1.Stop();
             SetTimer();
 
-            timerDecision = Settings.Default.timeDecision;
-            timerTotalReview = Settings.Default.timeReview;
+            timerAllTask = Settings.Default.timeAllTask;
+            timerSingleTask = Settings.Default.timeSingleTask;
             timerLastDecision = Settings.Default.timeLastDecision;
             skipped = Settings.Default.skip;
             submitted = Settings.Default.submit;
-            adt = Settings.Default.adt;
+            indicator = Settings.Default.indicator;
 
-            textBoxTimerDecision.Text = timerDecision.TimeOfDay.ToString();
+            textBoxTimerAllTask.Text = timerAllTask.TimeOfDay.ToString();
             textBoxSubmitted.Text = submitted.ToString();
             textBoxSkipped.Text = skipped.ToString();
-            textBoxAdt.Text = adt.ToString();
+            
+            show_indicator();
+        }
+
+        private void show_indicator()
+        {
+            if (indicator_is_rph) textBoxIndicator.Text = indicator_to_rph(indicator).ToString() + " T/h";
+            else textBoxIndicator.Text = indicator.ToString() + " s/T";
+        }
+        private int indicator_to_rph(double ind)
+        {
+            return 3600 / (int)ind;
         }
 
         private void SetTimer()
         {
-            // Create a timer with a two second interval.
+            // Create a timer with a second interval.
             aTimer = new System.Timers.Timer(1000);
             // Hook up the Elapsed event for the timer. 
             aTimer.Elapsed += OnTimedEvent;
@@ -76,32 +87,26 @@ namespace timer_and_counter
 
             TimeSpan timediff = DateTime.Now - startTime;
             startTime = DateTime.Now;
-            timerDecision = timerDecision.Add(timediff);
+            timerAllTask = timerAllTask.Add(timediff);
+            timerSingleTask = timerSingleTask.Add(timediff);
 
             Console.Write(timediff.ToString());
             Console.Write(" - ");
-            Console.WriteLine(timerDecision.TimeOfDay.ToString());
+            Console.Write(timerSingleTask.TimeOfDay.ToString());
+            Console.Write(" - ");
+            Console.WriteLine(timerAllTask.TimeOfDay.ToString());
             //Console.WriteLine("t  = {0:HH:mm:ss.fff}", timerDecision);
 
-            if (textBoxTimerDecision.InvokeRequired)
+            if (textBoxTimerSingleTask.InvokeRequired)
             {
-                textBoxTimerDecision.BeginInvoke(new MethodInvoker(() => textBoxTimerDecision.Text = timerDecision.TimeOfDay.ToString()));
+                textBoxTimerAllTask.BeginInvoke(new MethodInvoker(() => textBoxTimerSingleTask.Text = timerSingleTask.TimeOfDay.ToString()));
+            }
+            if (textBoxTimerAllTask.InvokeRequired)
+            {
+                textBoxTimerAllTask.BeginInvoke(new MethodInvoker(() => textBoxTimerAllTask.Text = timerAllTask.TimeOfDay.ToString()));
             }
             save_state();
         }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            //timerDecision = timerDecision.AddSeconds(1);
-
-            DateTime now = DateTime.Now;
-            TimeSpan timediff = now - startTime;
-            timerDecision = timerDecision.Add(timediff);
-            textBoxTimerDecision.Text = timerDecision.TimeOfDay.ToString();
-            
-            save_state();
-        }
-
 
         private void buttonStartStop_Click(object sender, EventArgs e)
         {
@@ -133,11 +138,11 @@ namespace timer_and_counter
             DialogResult res = MessageBox.Show("Reset?", "Reset?", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
             if (res == DialogResult.OK)
             {
-                timerTotalReview = timerDecision = DateTime.MinValue;
-                textBoxTimerDecision.Text = timerTotalReview.TimeOfDay.ToString();
+                timerSingleTask = timerAllTask = DateTime.MinValue;
+                textBoxTimerAllTask.Text = timerSingleTask.TimeOfDay.ToString();
 
-                adt = 0;
-                textBoxAdt.Text = adt.ToString();
+                indicator = 0;
+                textBoxIndicator.Text = indicator.ToString();
 
                 submitted = skipped = 0;
                 textBoxSkipped.Text = skipped.ToString();
@@ -151,10 +156,14 @@ namespace timer_and_counter
         {
             submitted++;
             textBoxSubmitted.Text = submitted.ToString();
-            timerLastDecision = timerDecision;
+            timerLastDecision = timerAllTask;
+            timerSingleTask = DateTime.MinValue;
 
-            adt = Math.Round(getTotalSeconds(timerDecision) / submitted, 2);
-            textBoxAdt.Text = adt.ToString();
+            textBoxTimerSingleTask.Text = timerSingleTask.TimeOfDay.ToString();
+
+            indicator = Math.Round(getTotalSeconds(timerAllTask) / submitted, 1);
+            show_indicator();
+            //textBoxIndicator.Text = indicator.ToString();
 
             SoundPlayer simpleSound = new SoundPlayer(@"c:\Windows\Media\Speech On.wav");
             simpleSound.Play();
@@ -164,8 +173,8 @@ namespace timer_and_counter
         {
             skipped++;
             textBoxSkipped.Text = skipped.ToString();
-            timerDecision = timerLastDecision;
-            textBoxTimerDecision.Text = timerDecision.TimeOfDay.ToString();
+            timerAllTask = timerLastDecision;
+            textBoxTimerAllTask.Text = timerAllTask.TimeOfDay.ToString();
 
             SoundPlayer simpleSound = new SoundPlayer(@"c:\Windows\Media\Windows Balloon.wav");
             simpleSound.Play();
@@ -173,16 +182,16 @@ namespace timer_and_counter
 
         private void buttonConvertToSecond_Click(object sender, EventArgs e)
         {
-            textBoxTimerDecision.Text = getTotalSeconds(timerDecision).ToString();
+            textBoxTimerAllTask.Text = getTotalSeconds(timerAllTask).ToString();
         }
 
         private void textBoxTimerDecision_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                TimeSpan ts = TimeSpan.Parse(textBoxTimerDecision.Text);
-                timerDecision = timerDecision.Date + ts;
-                MessageBox.Show(timerDecision.TimeOfDay.ToString());
+                TimeSpan ts = TimeSpan.Parse(textBoxTimerAllTask.Text);
+                timerAllTask = timerAllTask.Date + ts;
+                MessageBox.Show(timerAllTask.TimeOfDay.ToString());
             }
         }
 
@@ -202,10 +211,40 @@ namespace timer_and_counter
             }
         }
 
+        private void labelVersion_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(appVersion + "\n" +
+                "https://github.com/luqmanhakimpens");
+        }
+
+        private void readme_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("[indicator]        {Start/Stop}   {Reset}\n" +
+                            "[overall Timer]  [Skip Counter] {Skip}\n" +
+                            "[Single Timer]   [Task Counter] {Submit}\n\n" +
+                            "double click to switch mode(adt/rph)");
+        }
+
+        private void textBoxIndicator_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            indicator_is_rph ^= true;
+            show_indicator();
+        }
+
+        private void textBoxSkipped_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonStartStop_MouseHover(object sender, EventArgs e)
+        {
+
+        }
+
         private void textBoxTimerDecision_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            getTotalSeconds(timerDecision);
-            textBoxTimerDecision.Text = getTotalSeconds(timerDecision).ToString();
+            getTotalSeconds(timerAllTask);
+            textBoxTimerAllTask.Text = getTotalSeconds(timerAllTask).ToString();
         }
 
         private static double getTotalSeconds(DateTime date)
@@ -217,12 +256,12 @@ namespace timer_and_counter
 
         private void save_state()
         {
-            Settings.Default.timeDecision = timerDecision;
-            Settings.Default.timeReview = timerTotalReview;
+            Settings.Default.timeAllTask = timerAllTask;
+            Settings.Default.timeSingleTask = timerSingleTask;
             Settings.Default.timeLastDecision = timerLastDecision;
             Settings.Default.skip = skipped;
             Settings.Default.submit = submitted;
-            Settings.Default.adt = adt;
+            Settings.Default.indicator = indicator;
             Settings.Default.Save();
         }
     }
