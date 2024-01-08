@@ -78,7 +78,6 @@
             this.textBoxSkipped.Text = "000";
             this.textBoxSkipped.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.textBoxSkipped, "Skipped");
-            this.textBoxSkipped.TextChanged += new System.EventHandler(this.textBoxSkipped_TextChanged);
             this.textBoxSkipped.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxSkipped_KeyDown);
             // 
             // textBoxIndicator
@@ -152,7 +151,6 @@
             this.toolTip1.SetToolTip(this.buttonStartStop, "Start/Stop");
             this.buttonStartStop.UseVisualStyleBackColor = false;
             this.buttonStartStop.Click += new System.EventHandler(this.buttonStartStop_Click);
-            this.buttonStartStop.MouseHover += new System.EventHandler(this.buttonStartStop_MouseHover);
             // 
             // labelVersion
             // 

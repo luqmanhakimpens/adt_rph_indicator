@@ -1,26 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Globalization;
-using System.Linq;
 using System.Media;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 using timer_and_counter.Properties;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace timer_and_counter
 {
     public partial class Form1 : Form
     {
         String appVersion = "Version: 2.0";
-        DateTime tt;
         DateTime timerLastDecision;
         DateTime timerSingleTask;
         DateTime startTime;
@@ -30,7 +18,7 @@ namespace timer_and_counter
 
         private static System.Timers.Timer aTimer;
 
-        bool timerRunning = false, timerstarted = false, indicator_is_rph = false;
+        bool timerRunning = false, indicator_is_rph = false;
         
         UInt32 submitted,skipped;
         double indicator;
@@ -43,7 +31,7 @@ namespace timer_and_counter
         private void Form1_Load(object sender, EventArgs e)
         {
             labelVersion.Text = appVersion;
-            //timer1.Stop();
+
             SetTimer();
 
             timerAllTask = Settings.Default.timeAllTask;
@@ -82,9 +70,6 @@ namespace timer_and_counter
         }
         private void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            //tt = tt.AddSeconds(1);
-            //timerDecision = timerDecision.AddSeconds(1);
-
             TimeSpan timediff = DateTime.Now - startTime;
             startTime = DateTime.Now;
             timerAllTask = timerAllTask.Add(timediff);
@@ -95,7 +80,6 @@ namespace timer_and_counter
             Console.Write(timerSingleTask.TimeOfDay.ToString());
             Console.Write(" - ");
             Console.WriteLine(timerAllTask.TimeOfDay.ToString());
-            //Console.WriteLine("t  = {0:HH:mm:ss.fff}", timerDecision);
 
             if (textBoxTimerSingleTask.InvokeRequired)
             {
@@ -112,8 +96,6 @@ namespace timer_and_counter
         {
             if (!timerRunning)
             {
-                //timer1.Start();
-                //if(timerstarted)
                 startTime = DateTime.Now;
                 aTimer.Start();
                 timerRunning = true;
@@ -123,7 +105,6 @@ namespace timer_and_counter
             }
             else
             {
-                //timer1.Stop();
                 last_td = td;
                 aTimer.Stop();
                 timerRunning = false;
@@ -163,7 +144,6 @@ namespace timer_and_counter
 
             indicator = Math.Round(getTotalSeconds(timerAllTask) / submitted, 1);
             show_indicator();
-            //textBoxIndicator.Text = indicator.ToString();
 
             SoundPlayer simpleSound = new SoundPlayer(@"c:\Windows\Media\Speech On.wav");
             simpleSound.Play();
@@ -217,28 +197,10 @@ namespace timer_and_counter
                 "https://github.com/luqmanhakimpens");
         }
 
-        private void readme_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("[indicator]        {Start/Stop}   {Reset}\n" +
-                            "[overall Timer]  [Skip Counter] {Skip}\n" +
-                            "[Single Timer]   [Task Counter] {Submit}\n\n" +
-                            "double click to switch mode(adt/rph)");
-        }
-
         private void textBoxIndicator_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             indicator_is_rph ^= true;
             show_indicator();
-        }
-
-        private void textBoxSkipped_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void buttonStartStop_MouseHover(object sender, EventArgs e)
-        {
-
         }
 
         private void textBoxTimerDecision_MouseDoubleClick(object sender, MouseEventArgs e)
